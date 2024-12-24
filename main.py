@@ -1,5 +1,5 @@
+import json
 import sys
-import xml.etree.ElementTree as ET
 
 import aiohttp
 
@@ -26,14 +26,14 @@ class PyOSM:
         """
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(f"https://api.openstreetmap.org/api/0.6/capabilities") as resp:
+            async with session.get(f"https://api.openstreetmap.org/api/0.6/capabilities.json") as resp:
                 if resp.status == 200:
-                    root = ET.fromstring(await resp.text())
+                    data = json.loads(await resp.text())
 
                     self._ApiRates.update({
-                        'changesets': {key: int(value) for key, value in root.find("api/changesets").attrib.items()},
-                        'notes': {key: int(value) for key, value in root.find("api/notes").attrib.items()},
-                        'timeout': int(root.find("api/timeout").attrib['seconds'])
+                        'changesets': data['api']['changesets'],
+                        'notes': data['api']['notes'],
+                        'timeout': data['api']['timeout']['seconds']
                     })
 
                 else:
@@ -46,3 +46,12 @@ async def make_py_osm() -> PyOSM:
     await pyosm.update_api_rates()
 
     return pyosm
+
+
+"""async def test():
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://api.openstreetmap.org/api/0.6/changesets?display_name=Chepycou") as response:
+            text = await response.text()
+
+    with open("OSMTest.xml", 'w') as f:
+        f.write(text)"""
