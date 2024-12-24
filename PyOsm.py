@@ -92,8 +92,6 @@ async def make_py_osm() -> PyOSM:
         f.write(text)"""
 
 """
-/api/0.6/permissions
-
 /api/0.6/user/#id
 /api/0.6/users?users=#id1,#id2,...,#idn
 

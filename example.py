@@ -1,6 +1,6 @@
 import asyncio
 
-from Cogs.OSM.Py_OSM_API.main import make_py_osm
+from Cogs.OSM.Py_OSM_API.PyOsm import make_py_osm
 
 
 async def main():
