@@ -3,11 +3,11 @@
 
 import asyncio
 
-from Cogs.OSM.Py_OSM_API.PyOsm import make_py_osm
+from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 
 
 async def main():
-    PyOsm = await make_py_osm()
+    PyOsm = await osm_builder()
 
     print(await PyOsm.get_uid_with_changeset("Chepycou"))  # 14112053
     print(await PyOsm.fetch_user_info(14112053))

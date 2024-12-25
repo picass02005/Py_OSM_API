@@ -121,8 +121,7 @@ class PyOSM:
                     return None
 
 
-
-async def make_py_osm() -> PyOSM:
+async def osm_builder() -> PyOSM:
     pyosm = PyOSM()
     await pyosm.update_api_rates()
 
