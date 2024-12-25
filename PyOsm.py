@@ -1,8 +1,11 @@
 import json
 import sys
+from typing import Tuple, Iterable
 from urllib.parse import quote
 
 import aiohttp
+
+from User import OSMUser
 
 """
 HOW TO FIND YOUR USER ID
@@ -74,6 +77,46 @@ class PyOSM:
                     sys.stderr.write("WARNING: Couldn't fetch OSM UID from display_name")
                     return -1
 
+    @staticmethod
+    async def fetch_user_info(uid: int) -> OSMUser | None:
+        """
+        Fetch a user using its UID
+        :param uid: The user's UID
+        :return: Inititalized OSMUser if successfull, else None
+        """
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.openstreetmap.org/api/0.6/user/{uid}.json") as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    return OSMUser(data["user"])
+
+                else:
+                    sys.stderr.write("WARNING: Couldn't fetch user informations")
+                    return None
+
+    @staticmethod
+    async def fetch_users_info(uid: Iterable[int]) -> Tuple[OSMUser, ...] | None:
+        """
+        Fetch multiple user using their UID
+        :param uid: Every UID we want to get information on
+        :return: Inititalized OSMUsers in a tuple if successfull, else None
+        """
+
+        uid_str = ','.join([str(i) for i in uid])
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.openstreetmap.org/api/0.6/users.json?users={uid_str}") as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    return tuple([OSMUser(i["user"]) for i in data["users"]])
+
+                else:
+                    sys.stderr.write("WARNING: Couldn't fetch user informations")
+                    return None
+
 
 
 async def make_py_osm() -> PyOSM:
@@ -92,9 +135,6 @@ async def make_py_osm() -> PyOSM:
         f.write(text)"""
 
 """
-/api/0.6/user/#id
-/api/0.6/users?users=#id1,#id2,...,#idn
-
 [
 /api/0.6/notes
 /api/0.6/notes/#id
@@ -103,6 +143,4 @@ async def make_py_osm() -> PyOSM:
 
 /api/0.6/changesets
 /api/0.6/changeset/#id?include_discussion=true
-
-
 """

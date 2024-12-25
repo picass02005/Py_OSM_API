@@ -16,7 +16,7 @@ class OSMUser:
         self.display_name: str = json_response["display_name"]
         self.account_created: datetime = datetime.fromisoformat(json_response["account_created"])
         self.description: str = json_response["description"]
-        self.pfp_link: str = json_response["img"]["href"]
+        self.pfp_link: str = json_response["img"]["href"] if "img" in json_response.keys() else ""
         self.roles: List = json_response["roles"]
 
         self.changesets_count: int = json_response["changesets"]["count"]
