@@ -31,4 +31,4 @@ class OSMUser:
         :return: A string corresponding to this object
         """
 
-        return f"<OSMUser object: {self.display_name}, UID={self.uid}, Created on {self.account_created.isoformat()})>"
+        return f"<OSMUser object: {self.display_name}, UID={self.uid}, Created on {self.account_created.isoformat()}>"
