@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# Copyright (C) 2024 picasso2005 <clementduran0@gmail.com> - All Rights Reserved
+
 import asyncio
 
 from Cogs.OSM.Py_OSM_API.PyOsm import make_py_osm
