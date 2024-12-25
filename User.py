@@ -6,6 +6,10 @@ from typing import Union, Dict, List
 
 
 class OSMUser:
+    """
+    This class is used to represent a user
+    """
+
     # noinspection PyTypeChecker
     def __init__(self, json_response: Dict[str, Union[object, Dict[str, Union[object, Dict[str, object]]]]]) -> None:
         """
