@@ -56,7 +56,7 @@ class PyOSM:
     @staticmethod
     async def get_uid_with_changeset(display_name: str) -> int:
         """
-        This method will fetch a user's changeset and extract its UID from there
+        Following method is a hack used to get a user UID from one of their changeset
         This doesn't work if someone never made any changeset
         :param display_name: The display name of the user you want to fetch
         :return: If UID is found, return its value; else it will return -1
