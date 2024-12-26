@@ -19,7 +19,9 @@ It should be under {'users': {'id': YOUR_USER_ID}}
 
 class PyOSM:
     def __init__(self):
-        self._ApiRates = {
+        self._Capabilities = {
+            'area': 0,
+            'note_area': 0,
             'changesets': {
                 'maximum_elements': 0,
                 'default_query_limit': 0,
@@ -27,12 +29,18 @@ class PyOSM:
             },
             'notes': {
                 'default_query_limit': 0,
-                'maximum_query_limit': 0
+                'maximum_query_limit': 0,
+                'area': 0
             },
-            'timeout': 0
+            'timeout': 0,
+            'status': {
+                'database': "offline",
+                'api': "offline",
+                'gpx': "offline"
+            }
         }
 
-    async def update_api_rates(self) -> bool:
+    async def update_capabilities(self) -> bool:
         """
         Updates api rates dictionary
         :return: True if it managed to update api rates
@@ -43,10 +51,13 @@ class PyOSM:
                 if resp.status == 200:
                     data = json.loads(await resp.text())
 
-                    self._ApiRates.update({
+                    self._Capabilities.update({
+                        'area': data['api']['area']['maximum'],
+                        'note_area': data['api']['note_area']['maximum'],
                         'changesets': data['api']['changesets'],
                         'notes': data['api']['notes'],
-                        'timeout': data['api']['timeout']['seconds']
+                        'timeout': data['api']['timeout']['seconds'],
+                        'status': data['api']['status']
                     })
 
                 else:
@@ -123,7 +134,7 @@ class PyOSM:
 
 async def osm_builder() -> PyOSM:
     pyosm = PyOSM()
-    await pyosm.update_api_rates()
+    await pyosm.update_capabilities()
 
     return pyosm
 
