@@ -10,8 +10,7 @@ class OSMUser:
     This class is used to represent a user
     """
 
-    # noinspection PyTypeChecker
-    def __init__(self, json_response: Dict[str, Union[object, Dict[str, Union[object, Dict[str, object]]]]]) -> None:
+    def __init__(self, json_response: Dict[str: Union[object, Dict[str: Union[object, Dict[str: object]]]]]) -> None:
         """
         Based on responses from those API endpoints /api/0.6/user/#id.json or /api/0.6/users.json?users=#id1,#id2
         :param json_response: The json response of each user (e.g. what's in "user" in the single user call)
@@ -33,7 +32,7 @@ class OSMUser:
 
         self.agreed_contributor_terms: bool = json_response["contributor_terms"]["agreed"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         :return: A string corresponding to this object
         """
