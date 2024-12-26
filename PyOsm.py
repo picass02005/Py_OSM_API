@@ -8,6 +8,8 @@ from urllib.parse import quote
 
 import aiohttp
 
+from Cogs.OSM.Py_OSM_API.BoundingBox import BoundingBox
+from Cogs.OSM.Py_OSM_API.Note import OSMNote
 from User import OSMUser
 
 """
@@ -19,7 +21,7 @@ It should be under {'users': {'id': YOUR_USER_ID}}
 
 class PyOSM:
     def __init__(self):
-        self._Capabilities = {
+        self._capabilities = {
             'area': 0,
             'note_area': 0,
             'changesets': {
@@ -51,7 +53,7 @@ class PyOSM:
                 if resp.status == 200:
                     data = json.loads(await resp.text())
 
-                    self._Capabilities.update({
+                    self._capabilities.update({
                         'area': data['api']['area']['maximum'],
                         'note_area': data['api']['note_area']['maximum'],
                         'changesets': data['api']['changesets'],
@@ -61,7 +63,7 @@ class PyOSM:
                     })
 
                 else:
-                    sys.stderr.write("WARNING: Couldn't fetch OSM API rates")
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM API rates: {resp.status} {await resp.text()}")
                     return False
 
     @staticmethod
@@ -88,7 +90,8 @@ class PyOSM:
 
 
                 else:
-                    sys.stderr.write("WARNING: Couldn't fetch OSM UID from display_name")
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM UID from display_name: {resp.status} "
+                                     f"{await resp.text()}")
                     return -1
 
     @staticmethod
@@ -107,7 +110,7 @@ class PyOSM:
                     return OSMUser(data["user"])
 
                 else:
-                    sys.stderr.write("WARNING: Couldn't fetch user informations")
+                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
                     return None
 
     @staticmethod
@@ -128,8 +131,50 @@ class PyOSM:
                     return tuple([OSMUser(i["user"]) for i in data["users"]])
 
                 else:
-                    sys.stderr.write("WARNING: Couldn't fetch user informations")
+                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
                     return None
+
+    async def fetch_notes_by_box(self, bbox: BoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
+        """
+        Fetch notes respecting the following arguments
+        :param bbox: Coordinates for the area to retrieve the notes from. Must not be overlaping the date line
+        :param limit: Number of entries returned at max
+        :param closed: Number of days a note needs to be closed to be excluded (0 means only open notes are returned)
+        :return: A tuple of OSM Notes
+        """
+
+        # ===== Data check ===== #
+
+        if bbox.cross_date_line():
+            raise ValueError("The bounding box crosses date line")
+
+        for i in bbox.get_size():
+            if i > self._capabilities['note_area']:
+                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area'] * 100} "
+                                 f"square degrees")
+
+        if limit > self._capabilities['notes']['maximum_query_limit']:
+            raise ValueError(f"Limit is too big: must be under {self._capabilities['notes']['maximum_query_limit']}")
+
+        # ========== #
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                    f"https://api.openstreetmap.org/api/0.6/notes.json?bbox={bbox}&limit={limit}&closed={closed}"
+            ) as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    if len(data['features']) == 0:
+                        return ()
+
+                    return tuple([OSMNote(i) for i in data['features']])
+
+
+
+                else:
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}")
+                    return ()
 
 
 async def osm_builder() -> PyOSM:
@@ -149,7 +194,6 @@ async def osm_builder() -> PyOSM:
 
 """
 [
-/api/0.6/notes
 /api/0.6/notes/#id
 /api/0.6/notes/search
 ]

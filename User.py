@@ -10,7 +10,8 @@ class OSMUser:
     This class is used to represent a user
     """
 
-    def __init__(self, json_response: Dict[str: Union[object, Dict[str: Union[object, Dict[str: object]]]]]) -> None:
+    # noinspection PyTypeChecker
+    def __init__(self, json_response: Dict[str, Union[object, Dict[str, Union[object, Dict[str, object]]]]]) -> None:
         """
         Based on responses from those API endpoints /api/0.6/user/#id.json or /api/0.6/users.json?users=#id1,#id2
         :param json_response: The json response of each user (e.g. what's in "user" in the single user call)

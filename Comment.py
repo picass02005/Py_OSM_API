@@ -10,12 +10,13 @@ class OSMComment:
     This class is used to represent a comment
     """
 
-    def __init__(self, json_response: Dict[str: object]) -> None:
+    # noinspection PyTypeChecker
+    def __init__(self, json_response: Dict[str, object]) -> None:
         """
         :param json_response: The json response of one comment
         """
 
-        self.date: datetime = datetime.fromisoformat(json_response['date'])
+        self.date: datetime = datetime.strptime(json_response['date'], "%Y-%m-%d %H:%M:%S UTC")
         self.action: str = json_response['action']
         self.text: str = json_response['text']
         self.html: str = json_response['html']

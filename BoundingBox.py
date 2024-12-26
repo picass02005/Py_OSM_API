@@ -1,6 +1,9 @@
 # SPDX-License-Identifier: MIT
 # Copyright (C) 2024 picasso2005 <clementduran0@gmail.com> - All Rights Reserved
 
+import math
+from typing import Tuple
+
 
 class BoundingBox:
     """
@@ -13,3 +16,30 @@ class BoundingBox:
         self.bottom = bottom
         self.right = right
         self.top = top
+
+    def get_size(self) -> Tuple[float, float]:
+        """
+        Get the absolute size of bounding box in decimal degrees
+        :return: Tuple in the form of (horizontal, vertical)
+        """
+
+        return math.fabs(self.left - self.right), math.fabs(self.top - self.bottom)
+
+    def cross_date_line(self) -> bool:
+        """
+        Tells if the bounding box cross dateline
+        :return: Boolean
+        """
+
+        if 180 >= self.left > 0 > self.right >= -180:
+            return True
+
+        else:
+            return False
+
+    def __str__(self) -> str:
+        """
+        :return: The bounding box in the form of left,bottom,right,top
+        """
+
+        return f"{self.left},{self.bottom},{self.right},{self.top}"
