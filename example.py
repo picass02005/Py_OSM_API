@@ -8,23 +8,27 @@ from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 
 
 async def main():
-    PyOsm = await osm_builder()
+    py_osm = await osm_builder()
 
-    print(PyOsm._capabilities)
+    print(py_osm._capabilities)
 
-    print(await PyOsm.get_uid_with_changeset("Chepycou"))  # 14112053
-    print(await PyOsm.fetch_user_info(14112053))
+    print(await py_osm.get_uid_with_changeset("Chepycou"))  # 14112053
+    print(await py_osm.fetch_user_info(14112053))
 
-    for i in await PyOsm.fetch_users_info([14112053, 1]):
+    for i in await py_osm.fetch_users_info([14112053, 1]):
         print(i)
 
-    for i in await PyOsm.fetch_notes_by_box(
+    for i in await py_osm.fetch_notes_by_box(
             BoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
             50,
             7
     ):
         print(i)
         print([str(j) for j in i.comments])
+
+    print("=====")
+    print((note := await py_osm.fetch_note_by_id(3514775)))
+    print([str(j) for j in note.comments])
 
 
 

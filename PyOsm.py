@@ -176,6 +176,26 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}")
                     return ()
 
+    @staticmethod
+    async def fetch_note_by_id(note_id: int) -> OSMNote | None:
+        """
+        Fetch a note by its internal id
+        :param note_id: The note we want to fetch
+        :return: The note object or None if something went wrong
+        """
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.openstreetmap.org/api/0.6/notes/{note_id}.json") as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    return OSMNote(data)
+
+
+                else:
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM note: {resp.status} {await resp.text()}")
+                    return None
+
 
 async def osm_builder() -> PyOSM:
     pyosm = PyOSM()
@@ -194,7 +214,6 @@ async def osm_builder() -> PyOSM:
 
 """
 [
-/api/0.6/notes/#id
 /api/0.6/notes/search
 ]
 
