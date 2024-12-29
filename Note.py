@@ -55,4 +55,5 @@ class OSMNote:
         :return: A string corresponding to this object
         """
 
-        return f"<OSMNote object: {self.id}, Statuts={self.status}, Created on {self.date_created.isoformat()}>"
+        return (f"<OSMNote object: {self.id}, Statuts={self.status}, Created on {self.date_created.isoformat()}, "
+                f"{len(self.comments)} comments>")
