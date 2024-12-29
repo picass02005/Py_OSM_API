@@ -134,12 +134,13 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
                     return None
 
-    async def fetch_notes_by_box(self, bbox: BoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
+    async def fetch_notes_by_bbox(self, bbox: BoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
         """
         Fetch notes respecting the following arguments
         :param bbox: Coordinates for the area to retrieve the notes from. Must not be overlaping the date line
         :param limit: Number of entries returned at max
-        :param closed: Number of days a note needs to be closed to be excluded (0 means only open notes are returned)
+        :param closed: Number of days a note needs to be closed to be excluded (0 means only open notes are returned,
+        negative means all notes)
         :return: A tuple of OSM Notes
         """
 

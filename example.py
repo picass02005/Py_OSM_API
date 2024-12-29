@@ -18,7 +18,7 @@ async def main():
     for i in await py_osm.fetch_users_info([14112053, 1]):
         print(i)
 
-    for i in await py_osm.fetch_notes_by_box(
+    for i in await py_osm.fetch_notes_by_bbox(
             BoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
             50,
             7
