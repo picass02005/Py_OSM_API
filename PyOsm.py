@@ -155,10 +155,8 @@ class PyOSM:
         if bbox.cross_date_line():
             raise ValueError("The bounding box crosses date line")
 
-        for i in bbox.get_size():
-            if i > self._capabilities['note_area']:
-                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} "
-                                 f"square degrees")
+        if bbox.get_area() > self._capabilities['note_area']:
+            raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} square degrees")
 
         if limit > self._capabilities['notes']['maximum_query_limit']:
             raise ValueError(f"Limit is too big: must be under {self._capabilities['notes']['maximum_query_limit']}")

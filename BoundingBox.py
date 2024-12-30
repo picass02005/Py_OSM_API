@@ -2,7 +2,6 @@
 # Copyright (C) 2024 picasso2005 <clementduran0@gmail.com> - All Rights Reserved
 
 import math
-from typing import Tuple
 
 
 class OSMBoundingBox:
@@ -17,13 +16,13 @@ class OSMBoundingBox:
         self.right = right
         self.top = top
 
-    def get_size(self) -> Tuple[float, float]:
+    def get_area(self) -> float:
         """
-        Get the absolute size of bounding box in decimal degrees
-        :return: Tuple in the form of (horizontal, vertical)
+        Get the area size of bounding box in decimal degrees
+        :return: The area of bounding box
         """
 
-        return math.fabs(self.left - self.right), math.fabs(self.top - self.bottom)
+        return math.fabs(self.left - self.right) * math.fabs(self.top - self.bottom)
 
     def cross_date_line(self) -> bool:
         """
