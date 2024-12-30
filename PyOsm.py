@@ -8,7 +8,7 @@ from urllib.parse import quote
 
 import aiohttp
 
-from Cogs.OSM.Py_OSM_API.BoundingBox import BoundingBox
+from Cogs.OSM.Py_OSM_API.BoundingBox import OSMBoundingBox
 from Cogs.OSM.Py_OSM_API.Note import OSMNote
 from User import OSMUser
 
@@ -134,7 +134,7 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
                     return None
 
-    async def fetch_notes_by_bbox(self, bbox: BoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
+    async def fetch_notes_by_bbox(self, bbox: OSMBoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
         """
         Fetch notes respecting the following arguments
         :param bbox: Coordinates for the area to retrieve the notes from. Must not be overlaping the date line
@@ -221,3 +221,5 @@ async def osm_builder() -> PyOSM:
 /api/0.6/changesets
 /api/0.6/changeset/#id?include_discussion=true
 """
+
+# TODO: Readme / doc

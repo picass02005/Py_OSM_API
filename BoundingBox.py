@@ -5,7 +5,7 @@ import math
 from typing import Tuple
 
 
-class BoundingBox:
+class OSMBoundingBox:
     """
     This class is used to represent a bounding box
     For more information, please refer to https://wiki.openstreetmap.org/wiki/Bounding_box

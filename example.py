@@ -3,7 +3,7 @@
 
 import asyncio
 
-from Cogs.OSM.Py_OSM_API.BoundingBox import BoundingBox
+from Cogs.OSM.Py_OSM_API.BoundingBox import OSMBoundingBox
 from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 
 
@@ -19,7 +19,7 @@ async def main():
         print(i)
 
     for i in await py_osm.fetch_notes_by_bbox(
-            BoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
+            OSMBoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
             50,
             7
     ):
