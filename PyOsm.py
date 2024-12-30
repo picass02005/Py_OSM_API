@@ -64,7 +64,7 @@ class PyOSM:
                     })
 
                 else:
-                    sys.stderr.write(f"WARNING: Couldn't fetch OSM API rates: {resp.status} {await resp.text()}")
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM API rates: {resp.status} {await resp.text()}\n")
                     return False
 
     @staticmethod
@@ -93,7 +93,7 @@ class PyOSM:
 
                 else:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM UID from display_name: {resp.status} "
-                                     f"{await resp.text()}")
+                                     f"{await resp.text()}\n")
                     return -1
 
     @staticmethod
@@ -113,7 +113,7 @@ class PyOSM:
                     return OSMUser(data["user"])
 
                 else:
-                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
+                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}\n")
                     return None
 
     @staticmethod
@@ -135,7 +135,7 @@ class PyOSM:
                     return tuple([OSMUser(i["user"]) for i in data["users"]])
 
                 else:
-                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}")
+                    sys.stderr.write(f"WARNING: Couldn't fetch user informations: {resp.status} {await resp.text()}\n")
                     return None
 
     async def fetch_notes_by_bbox(self, bbox: OSMBoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
@@ -178,7 +178,7 @@ class PyOSM:
 
 
                 else:
-                    sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}")
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}\n")
                     return ()
 
     @staticmethod
@@ -199,7 +199,7 @@ class PyOSM:
 
 
                 else:
-                    sys.stderr.write(f"WARNING: Couldn't fetch OSM note: {resp.status} {await resp.text()}")
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM note: {resp.status} {await resp.text()}\n")
                     return None
 
 
