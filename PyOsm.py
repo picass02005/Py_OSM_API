@@ -3,14 +3,15 @@
 
 import json
 import sys
-from typing import Tuple, Iterable
+from datetime import datetime
+from typing import Tuple, Iterable, Optional, Type
 from urllib.parse import quote
 
 import aiohttp
 
-from Cogs.OSM.Py_OSM_API.BoundingBox import OSMBoundingBox
-from Cogs.OSM.Py_OSM_API.Note import OSMNote
-from User import OSMUser
+from .BoundingBox import OSMBoundingBox
+from .Note import OSMNote
+from .User import OSMUser
 
 """
 HOW TO FIND YOUR USER ID

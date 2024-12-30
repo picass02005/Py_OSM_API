@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import Union, Dict, List
 
-from Cogs.OSM.Py_OSM_API.Comment import OSMComment
+from .Comment import OSMComment
 
 
 class OSMNote:
