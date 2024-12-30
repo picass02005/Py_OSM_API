@@ -3,6 +3,8 @@
 
 from .BoundingBox import OSMBoundingBox
 from .Comment import OSMComment
+from .Enums import OSMOrder
+from .Enums import OSMSort
 from .Note import OSMNote
 from .PyOsm import PyOSM
 from .User import OSMUser
