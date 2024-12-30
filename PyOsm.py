@@ -45,6 +45,7 @@ class PyOSM:
     async def update_capabilities(self) -> bool:
         """
         Updates api rates dictionary
+
         :return: True if it managed to update api rates
         """
 
@@ -71,6 +72,7 @@ class PyOSM:
         """
         Following method is a hack used to get a user UID from one of their changeset
         This doesn't work if someone never made any changeset
+
         :param display_name: The display name of the user you want to fetch
         :return: If UID is found, return its value; else it will return -1
         """
@@ -98,6 +100,7 @@ class PyOSM:
     async def fetch_user_info(uid: int) -> OSMUser | None:
         """
         Fetch a user using its UID
+
         :param uid: The user's UID
         :return: Inititalized OSMUser if successfull, else None
         """
@@ -117,6 +120,7 @@ class PyOSM:
     async def fetch_users_info(uid: Iterable[int]) -> Tuple[OSMUser, ...] | None:
         """
         Fetch multiple user using their UID
+
         :param uid: Every UID we want to get information on
         :return: Inititalized OSMUsers in a tuple if successfull, else None
         """
@@ -136,22 +140,24 @@ class PyOSM:
 
     async def fetch_notes_by_bbox(self, bbox: OSMBoundingBox, limit: int = 100, closed: int = 7) -> Tuple[OSMNote, ...]:
         """
-        Fetch notes respecting the following arguments
+        Fetch notes located in a defined bounding box
+
         :param bbox: Coordinates for the area to retrieve the notes from. Must not be overlaping the date line
         :param limit: Number of entries returned at max
-        :param closed: Number of days a note needs to be closed to be excluded (0 means only open notes are returned,
-        negative means all notes)
+        :param closed: Number of days a note needs to be closed to be excluded (0 means only open notes are returned, negative means all notes)
         :return: A tuple of OSM Notes
+
+        :except ValueError: Raises this exception if the parameters are invalid (e.g. bounding box crosses date line, is too big or if limit is too high)
         """
 
-        # ===== Data check ===== #
+        # ===== Parameters checks ===== #
 
         if bbox.cross_date_line():
             raise ValueError("The bounding box crosses date line")
 
         for i in bbox.get_size():
             if i > self._capabilities['note_area']:
-                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area'] * 100} "
+                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} "
                                  f"square degrees")
 
         if limit > self._capabilities['notes']['maximum_query_limit']:
@@ -181,6 +187,7 @@ class PyOSM:
     async def fetch_note_by_id(note_id: int) -> OSMNote | None:
         """
         Fetch a note by its internal id
+
         :param note_id: The note we want to fetch
         :return: The note object or None if something went wrong
         """
