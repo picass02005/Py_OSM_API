@@ -281,10 +281,10 @@ class PyOSM:
             url += f"&from={quote(after.isoformat())}"
 
         if sort:
-            url += f"&sort={sort.value}"
+            url += f"&sort={sort.value if isinstance(sort, OSMSort) else sort}"
 
         if order:
-            url += f"&order={order.value}"
+            url += f"&order={order.value if isinstance(order, OSMOrder) else order}"
 
         # ========== #
 

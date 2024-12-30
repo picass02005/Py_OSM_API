@@ -47,6 +47,7 @@ async def main():
             before=datetime.fromisoformat("2022-06-01"),
             after=datetime.fromisoformat("2022-05-01"),
             sort=OSMSort.CREATED_AT,
+            # order="newest"
             order=OSMOrder.NEWEST
     ):
         print(i)
