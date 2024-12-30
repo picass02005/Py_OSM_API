@@ -4,12 +4,13 @@
 import json
 import sys
 from datetime import datetime
-from typing import Tuple, Iterable, Optional, Type
+from typing import Tuple, Iterable, Optional, Literal
 from urllib.parse import quote
 
 import aiohttp
 
 from .BoundingBox import OSMBoundingBox
+from .Enums import OSMSort, OSMOrder
 from .Note import OSMNote
 from .User import OSMUser
 
@@ -176,8 +177,6 @@ class PyOSM:
 
                     return tuple([OSMNote(i) for i in data['features']])
 
-
-
                 else:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}\n")
                     return ()
@@ -203,6 +202,106 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM note: {resp.status} {await resp.text()}\n")
                     return None
 
+    async def fetch_notes_by_search(
+            self,
+            limit: int = 100,
+            closed: int = 7,
+            query: Optional[str] = None,
+            user_name: Optional[str] = None,
+            user_id: Optional[int] = None,
+            bbox: Optional[OSMBoundingBox] = None,
+            before: Optional[datetime] = None,
+            after: Optional[datetime] = None,
+            sort: Optional[Literal[OSMSort.CREATED_AT, OSMSort.UPDATED_AT]] = None,
+            order: Optional[Literal[OSMOrder.NEWEST, OSMOrder.OLDEST]] = None
+    ) -> Tuple[OSMNote, ...]:
+        """
+        Fetch all notes matching to defined criteria.
+        For more information: https://wiki.openstreetmap.org/wiki/API_v0.6#Search_for_notes:_GET_/api/0.6/notes/search
+
+        :param limit: Maximum number of results. Must be under self._capabilities['notes']['maximum_query_limit']
+        :param closed: Maximum number of days a note has been closed for. If 0, return only open notes; if negative, return all notes
+        :param query: Text search query, matching either note text or comments
+        :param user_name: Search for notes which the given user interacted with
+        :param user_id: Same than user_name but with user ID. If both option provided, user_name takes priority
+        :param bbox: Coordinates for the area to retrieve the notes from. Must be under self._capability['note_area'] degrees
+        :param before: Keep notes where created_at or updated_at (defined in sort) is before this value
+        :param after: Keep notes where created_at or updated_at (defined in sort) is after this value
+        :param sort: Define what type of values we use for before and after. Valid values are defined in OSMSort
+        :param order: Used to sort by newest or oldest. Valid values are defined in OSMOrder
+
+        :return: A tuple containing all notes matching search criterias
+        :except ValueError: If any parameters is invalid.
+        """
+
+        # ===== Parameters check ===== #
+
+        if not 0 <= limit <= self._capabilities['notes']['maximum_query_limit']:
+            raise ValueError(f"Invalid limit: must be a positive below "
+                             f"{self._capabilities['notes']['maximum_query_limit']}")
+
+        if bbox is not None:
+            if bbox.get_area() > self._capabilities['note_area']:
+                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} square "
+                                 f"degrees")
+
+        if after is not None and before is not None:
+            if after > before:
+                raise ValueError("Before value is older than after value. You probably swapped them")
+
+        if sort not in OSMSort and sort is not None:
+            raise ValueError(f"{sort} is an invalid value for sort parameter. Valid values are defined in OSMSort")
+
+        if order not in OSMOrder and order is not None:
+            raise ValueError(f"{order} is an invalid value for order parameter. Valid values are defined in OSMOrder")
+
+        if (before is not None or after is not None) and sort is None:
+            ValueError("You must specify sort if before or after is defined")
+
+        # ===== Build URL ===== #
+
+        url = f"https://api.openstreetmap.org/api/0.6/notes/search.json?limit={limit}&closed={quote(str(closed))}"
+
+        if query:
+            url += f"&q={quote(query)}"
+
+        if user_name:
+            url += f"&display_name={quote(user_name)}"
+
+        if user_id:
+            url += f"&user={user_id}"
+
+        if bbox:
+            url += f"&bbox={bbox}"
+
+        if before:
+            url += f"&to={quote(before.isoformat())}"
+
+        if after:
+            url += f"&from={quote(after.isoformat())}"
+
+        if sort:
+            url += f"&sort={sort.value}"
+
+        if order:
+            url += f"&order={order.value}"
+
+        # ========== #
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    if len(data['features']) == 0:
+                        return ()
+
+                    return tuple([OSMNote(i) for i in data['features']])
+
+                else:
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}\n")
+                    return ()
+
 
 async def osm_builder() -> PyOSM:
     pyosm = PyOSM()
@@ -220,12 +319,9 @@ async def osm_builder() -> PyOSM:
         f.write(text)"""
 
 """
-[
-/api/0.6/notes/search
-]
-
 /api/0.6/changesets
 /api/0.6/changeset/#id?include_discussion=true
 """
 
 # TODO: Readme / doc
+# TODO: Change self._capabilities to enum
