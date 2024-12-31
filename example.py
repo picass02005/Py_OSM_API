@@ -12,7 +12,7 @@ from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 async def main():
     py_osm = await osm_builder()
 
-    print(py_osm._capabilities)
+    print(py_osm.capabilities)
 
     print(await py_osm.get_uid_with_changeset("Chepycou"))  # 14112053
     print(await py_osm.fetch_user_info(14112053))

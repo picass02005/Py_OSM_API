@@ -10,6 +10,7 @@ from urllib.parse import quote
 import aiohttp
 
 from .BoundingBox import OSMBoundingBox
+from .Capabilities import OSMCapabilities
 from .Enums import OSMSort, OSMOrder
 from .Note import OSMNote
 from .User import OSMUser
@@ -23,26 +24,7 @@ It should be under {'users': {'id': YOUR_USER_ID}}
 
 class PyOSM:
     def __init__(self):
-        self._capabilities = {
-            'area': 0,
-            'note_area': 0,
-            'changesets': {
-                'maximum_elements': 0,
-                'default_query_limit': 0,
-                'maximum_query_limit': 0
-            },
-            'notes': {
-                'default_query_limit': 0,
-                'maximum_query_limit': 0,
-                'area': 0
-            },
-            'timeout': 0,
-            'status': {
-                'database': "offline",
-                'api': "offline",
-                'gpx': "offline"
-            }
-        }
+        self.capabilities = OSMCapabilities()
 
     async def update_capabilities(self) -> bool:
         """
@@ -56,14 +38,7 @@ class PyOSM:
                 if resp.status == 200:
                     data = json.loads(await resp.text())
 
-                    self._capabilities.update({
-                        'area': data['api']['area']['maximum'],
-                        'note_area': data['api']['note_area']['maximum'],
-                        'changesets': data['api']['changesets'],
-                        'notes': data['api']['notes'],
-                        'timeout': data['api']['timeout']['seconds'],
-                        'status': data['api']['status']
-                    })
+                    self.capabilities.update_from_api(data)
 
                 else:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM API rates: {resp.status} {await resp.text()}\n")
@@ -157,11 +132,11 @@ class PyOSM:
         if bbox.cross_date_line():
             raise ValueError("The bounding box crosses date line")
 
-        if bbox.get_area() > self._capabilities['note_area']:
-            raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} square degrees")
+        if bbox.get_area() > self.capabilities.notes.area:
+            raise ValueError(f"Bounding box is too big: must be under {self.capabilities.notes.area} square degrees")
 
-        if limit > self._capabilities['notes']['maximum_query_limit']:
-            raise ValueError(f"Limit is too big: must be under {self._capabilities['notes']['maximum_query_limit']}")
+        if limit > self.capabilities.notes.maximum_query_limit:
+            raise ValueError(f"Limit is too big: must be under {self.capabilities.notes.maximum_query_limit}")
 
         # ========== #
 
@@ -219,7 +194,7 @@ class PyOSM:
         Fetch all notes matching to defined criteria.
         For more information: https://wiki.openstreetmap.org/wiki/API_v0.6#Search_for_notes:_GET_/api/0.6/notes/search
 
-        :param limit: Maximum number of results. Must be under self._capabilities['notes']['maximum_query_limit']
+        :param limit: Maximum number of results. Must be under self.capabilities.notes.maximum_query_limit
         :param closed: Maximum number of days a note has been closed for. If 0, return only open notes; if negative, return all notes
         :param query: Text search query, matching either note text or comments
         :param user_name: Search for notes which the given user interacted with
@@ -236,14 +211,12 @@ class PyOSM:
 
         # ===== Parameters check ===== #
 
-        if not 0 <= limit <= self._capabilities['notes']['maximum_query_limit']:
-            raise ValueError(f"Invalid limit: must be a positive below "
-                             f"{self._capabilities['notes']['maximum_query_limit']}")
+        if not 0 <= limit <= self.capabilities.notes.maximum_query_limit:
+            raise ValueError(f"Invalid limit: must be a positive below {self.capabilities.notes.maximum_query_limit}")
 
         if bbox is not None:
-            if bbox.get_area() > self._capabilities['note_area']:
-                raise ValueError(f"Bounding box is too big: must be under {self._capabilities['note_area']} square "
-                                 f"degrees")
+            if bbox.get_area() > self.capabilities.notes.area:
+                raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
 
         if after is not None and before is not None:
             if after > before:
@@ -324,4 +297,4 @@ async def osm_builder() -> PyOSM:
 """
 
 # TODO: Readme / doc
-# TODO: Change self._capabilities to enum
+# TODO: check imports path
