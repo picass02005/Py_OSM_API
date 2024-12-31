@@ -4,8 +4,8 @@
 import asyncio
 from datetime import datetime
 
+from Cogs.OSM.Py_OSM_API import OSMBoundingBox
 from Cogs.OSM.Py_OSM_API import OSMSort, OSMOrder
-from Cogs.OSM.Py_OSM_API.BoundingBox import OSMBoundingBox
 from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 
 

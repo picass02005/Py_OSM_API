@@ -9,11 +9,12 @@ from urllib.parse import quote
 
 import aiohttp
 
-from .BoundingBox import OSMBoundingBox
 from .Capabilities import OSMCapabilities
-from .Enums import OSMSort, OSMOrder
-from .Note import OSMNote
-from .User import OSMUser
+from .Enums import OSMOrder
+from .Enums import OSMSort
+from .Objects import OSMBoundingBox
+from .Objects import OSMNote
+from .Objects import OSMUser
 
 """
 HOW TO FIND YOUR USER ID
