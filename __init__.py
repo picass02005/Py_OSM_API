@@ -16,3 +16,4 @@ from .Objects import OSMNote
 from .Objects import OSMTimeDelta
 from .Objects import OSMUser
 from .PyOsm import PyOSM
+from .PyOsm import py_osm_builder

@@ -396,7 +396,7 @@ class PyOSM:
                     return ()
 
 
-async def osm_builder() -> PyOSM:
+async def py_osm_builder() -> PyOSM:
     pyosm = PyOSM()
     await pyosm.update_capabilities()
 

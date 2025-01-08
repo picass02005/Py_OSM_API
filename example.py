@@ -6,11 +6,11 @@ from datetime import datetime
 
 from Cogs.OSM.Py_OSM_API import OSMBoundingBox, OSMStatus, OSMTimeDelta
 from Cogs.OSM.Py_OSM_API import OSMSort, OSMOrder
-from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
+from Cogs.OSM.Py_OSM_API.PyOsm import py_osm_builder
 
 
 async def main():
-    py_osm = await osm_builder()
+    py_osm = await py_osm_builder()
 
     print(py_osm.capabilities)
 
