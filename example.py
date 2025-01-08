@@ -4,7 +4,7 @@
 import asyncio
 from datetime import datetime
 
-from Cogs.OSM.Py_OSM_API import OSMBoundingBox
+from Cogs.OSM.Py_OSM_API import OSMBoundingBox, OSMStatus, OSMTimeDelta
 from Cogs.OSM.Py_OSM_API import OSMSort, OSMOrder
 from Cogs.OSM.Py_OSM_API.PyOsm import osm_builder
 
@@ -52,6 +52,21 @@ async def main():
     ):
         print(i)
         print([str(j) for j in i.comments])
+
+    print("==========")
+
+    for i in await py_osm.fetch_changesets_by_search(
+            limit=50,
+            # user_name="Chepycou",
+            user_id=14112053,
+            bbox=OSMBoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
+            created_timedelta=OSMTimeDelta(datetime.fromisoformat("2024-01-01"), datetime.fromisoformat("2025-01-01")),
+            closed_timedelta=OSMTimeDelta(datetime.fromisoformat("2024-01-01"), datetime.fromisoformat("2025-01-01")),
+            by_ids=(160803069, 156684643, 156400019),
+            status=OSMStatus.CLOSED,
+            order=OSMOrder.NEWEST
+    ):
+        print(i)
 
 
 

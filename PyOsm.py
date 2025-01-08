@@ -12,8 +12,11 @@ import aiohttp
 from .Capabilities import OSMCapabilities
 from .Enums import OSMOrder
 from .Enums import OSMSort
+from .Enums import OSMStatus
 from .Objects import OSMBoundingBox
+from .Objects import OSMChangeset
 from .Objects import OSMNote
+from .Objects import OSMTimeDelta
 from .Objects import OSMUser
 
 """
@@ -276,6 +279,122 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM notes: {resp.status} {await resp.text()}\n")
                     return ()
 
+    async def fetch_changesets_by_search(
+            self,
+            limit: int = 100,
+            user_name: Optional[str] = None,
+            user_id: Optional[int] = None,
+            bbox: Optional[OSMBoundingBox] = None,
+            created_timedelta: Optional[OSMTimeDelta] = None,
+            closed_timedelta: Optional[OSMTimeDelta] = None,
+            by_ids: Optional[Iterable[int]] = None,
+            status: Literal[OSMStatus.OPEN, OSMStatus.CLOSED, OSMStatus.OPEN_AND_CLOSED] = OSMStatus.OPEN_AND_CLOSED,
+            order: Optional[Literal[OSMOrder.NEWEST, OSMOrder.OLDEST]] = None
+    ) -> Tuple[OSMChangeset, ...]:
+
+        """
+        Fetch all changesets matching to defined criteria.
+        For more information: https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets
+
+        :param limit: Maximum number of results. Must be under self.capabilities.changesets.maximum_query_limit
+        :param user_name: Search for notes which the given user interacted with
+        :param user_id: Same than user_name but with user ID. If both option provided, user_name takes priority
+        :param bbox: Changesets must be within this bounding box to be returned
+        :param created_timedelta: Return changesets created during this timedelta. Note: You can set only before or before AND after but can't just set after
+        :param closed_timedelta: Return changesets created during this timedelta. Note: You can set only before or before AND after but can't just set after
+        :param by_ids: Return only changesets with those ID
+        :param status: Decides if you want to get only open or closed changesets. Default value is both of them
+        :param order: Define in which order to return changesets
+
+        :return: Tuple containing all changesets validating those conditions
+        :except ValueError: If any parameter have invalid values. Please refer to the attached message
+        """
+
+        # ===== Parameters check =====
+
+        if not 0 <= limit <= self.capabilities.changesets.maximum_query_limit:
+            raise ValueError(
+                f"Invalid limit: must be a positive below {self.capabilities.changesets.maximum_query_limit}"
+            )
+
+        if user_name is None and user_id is None:
+            raise ValueError("You can only specify a user name or a user ID, but not both")
+
+        if created_timedelta is not None:
+            if created_timedelta.before is None:
+                raise ValueError("You never defined a before datetime for created_timedelta")
+
+            if not created_timedelta.check_data_validity():
+                raise ValueError(f"Created_timedelta is invalid: before datetime is older than after datetime")
+
+        if closed_timedelta is not None:
+            if closed_timedelta.before is None:
+                raise ValueError("You never defined a before datetime for closed_timedelta")
+
+            if not closed_timedelta.check_data_validity():
+                raise ValueError(f"Closed_timedelta is invalid: before datetime is older than after datetime")
+
+        if status not in OSMStatus:
+            raise ValueError(f"{status} is an invalid value for sort parameter. Valid values are defined in OSMStatus")
+
+        if order not in OSMOrder and order is not None:
+            raise ValueError(f"{order} is an invalid value for sort parameter. Valid values are defined in OSMOrder")
+
+        # ===== Build URL =====
+
+        url = f"https://api.openstreetmap.org/api/0.6/changesets.json?limit={limit}"
+
+        if user_name:
+            url += f"&display_name={quote(user_name)}"
+
+        if user_id:
+            url += f"&user={user_id}"
+
+        if bbox is not None:
+            url += f"&bbox={bbox}"
+
+        if created_timedelta is not None:
+            url += f"&from={created_timedelta.before.isoformat()}"
+
+            if created_timedelta.after is not None:
+                url += f"&to={created_timedelta.after.isoformat()}"
+
+        if closed_timedelta is not None:
+            url += f"&time={created_timedelta.before.isoformat()}"
+
+            if closed_timedelta.after is not None:
+                url += f",{created_timedelta.after.isoformat()}"
+
+        if by_ids is not None:
+            url += f"&changesets={','.join([str(i) for i in by_ids])}"
+
+        match status:
+            case OSMStatus.OPEN | "o" | "open":
+                url += "&open=true"
+            case OSMStatus.CLOSED | "c" | "closed":
+                url += "&closed=true"
+
+            # Do nothing if status is open and closed
+
+        if order is not None:
+            url += f"&order={order.value if isinstance(order, OSMOrder) else order}"
+
+        # ========== #
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    if len(data['changesets']) == 0:
+                        return ()
+
+                    return tuple([OSMChangeset(i) for i in data['changesets']])
+
+                else:
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM changesets: {resp.status} {await resp.text()}\n")
+                    return ()
+
 
 async def osm_builder() -> PyOSM:
     pyosm = PyOSM()
@@ -299,3 +418,5 @@ async def osm_builder() -> PyOSM:
 
 # TODO: Readme / doc
 # TODO: check imports path
+
+# TODO: check when usage of OSMTimedelta is possible
