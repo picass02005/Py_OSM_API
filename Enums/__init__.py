@@ -3,3 +3,4 @@
 
 from .Order import OSMOrder
 from .Sort import OSMSort
+from .Status import OSMStatus
