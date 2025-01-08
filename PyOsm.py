@@ -215,6 +215,9 @@ class PyOSM:
         if not 0 <= limit <= self.capabilities.notes.maximum_query_limit:
             raise ValueError(f"Invalid limit: must be a positive below {self.capabilities.notes.maximum_query_limit}")
 
+        if user_id is not None and user_name is not None:
+            raise ValueError("You can only specify a user name or a user ID, but not both")
+
         if bbox is not None:
             if bbox.get_area() > self.capabilities.notes.area:
                 raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
