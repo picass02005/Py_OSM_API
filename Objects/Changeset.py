@@ -2,9 +2,10 @@
 # Copyright (C) 2024 picasso2005 <clementduran0@gmail.com> - All Rights Reserved
 
 from datetime import datetime
-from typing import Dict
+from typing import Dict, Tuple
 
 from .BoundingBox import OSMBoundingBox
+from .ChangesetComment import OSMChangesetComment
 from .ChangesetTags import OSMChangesetTags
 
 type _json_types = None | str | float | int | bool
@@ -46,6 +47,14 @@ class OSMChangeset:
         self.user: str = json_response["user"]
 
         self.tags: OSMChangesetTags(json_response) = OSMChangesetTags(json_response)
+
+        if "comments" in json_response.keys():
+            self.comments: Tuple[OSMChangesetComment, ...] = tuple(
+                [OSMChangesetComment(i) for i in json_response["comments"]]
+            )
+
+        else:
+            self.comments: Tuple[OSMChangesetComment] = ()
 
     def __str__(self) -> str:
         """

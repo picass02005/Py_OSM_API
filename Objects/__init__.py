@@ -3,6 +3,7 @@
 
 from .BoundingBox import OSMBoundingBox
 from .Changeset import OSMChangeset
+from .ChangesetComment import OSMChangesetComment
 from .ChangesetTags import OSMChangesetTags
 from .Note import OSMNote
 from .NoteComment import OSMNoteComment

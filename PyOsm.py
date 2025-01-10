@@ -295,6 +295,7 @@ class PyOSM:
         """
         Fetch all changesets matching to defined criteria.
         For more information: https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets
+        Note: this method doesn't return comments, please use self.fetch_changesets_by_id for this purpose
 
         :param limit: Maximum number of results. Must be under self.capabilities.changesets.maximum_query_limit
         :param user_name: Search for notes which the given user interacted with
@@ -395,26 +396,41 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM changesets: {resp.status} {await resp.text()}\n")
                     return ()
 
+    async def fetch_changesets_by_id(self, changeset_id: int, include_discussion: bool = False) -> OSMChangeset | None:
+        """
+        Fetch a changeset by its ID
+        :param changeset_id: The changeset ID to fetch from
+        :param include_discussion: If set to True, will also fetch this changeset comments
+        :return: The fetched changeset, or None if any issue happened
+        """
+
+        url = f"https://api.openstreetmap.org/api/0.6/changeset/{changeset_id}.json"
+
+        if include_discussion:
+            url += "?include_discussion=true"
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                if resp.status == 200:
+                    data = json.loads(await resp.text())
+
+                    if len(data['changeset']) == 0:
+                        sys.stderr.write(f"WARNING: Couldn't fetch OSM changesets: data invalid\n")
+                        return None
+
+                    return OSMChangeset(data['changeset'])
+
+                else:
+                    sys.stderr.write(f"WARNING: Couldn't fetch OSM changesets: {resp.status} {await resp.text()}\n")
+                    return None
+
+
 
 async def py_osm_builder() -> PyOSM:
     pyosm = PyOSM()
     await pyosm.update_capabilities()
 
     return pyosm
-
-
-"""async def test():
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://api.openstreetmap.org/api/0.6/changesets?display_name=Chepycou") as response:
-            text = await response.text()
-
-    with open("OSMTest.xml", 'w') as f:
-        f.write(text)"""
-
-"""
-/api/0.6/changesets
-/api/0.6/changeset/#id?include_discussion=true
-"""
 
 # TODO: Readme / doc
 # TODO: check imports path

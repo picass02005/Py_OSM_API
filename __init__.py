@@ -10,6 +10,7 @@ from .Enums import OSMSort
 from .Enums import OSMStatus
 from .Objects import OSMBoundingBox
 from .Objects import OSMChangeset
+from .Objects import OSMChangesetComment
 from .Objects import OSMChangesetTags
 from .Objects import OSMNote
 from .Objects import OSMNoteComment

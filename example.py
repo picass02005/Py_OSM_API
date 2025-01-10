@@ -68,6 +68,11 @@ async def main():
     ):
         print(i)
 
+    print("=====")
+
+    print(tmp := await py_osm.fetch_changesets_by_id(160518131, include_discussion=True))
+    print([str(i) for i in tmp.comments])
+
 
 
 asyncio.run(main())
