@@ -7,13 +7,13 @@ from typing import Dict
 
 class OSMNoteComment:
     """
-    This class is used to represent a comment
+    This class is used to represent a note comment
     """
 
     # noinspection PyTypeChecker
     def __init__(self, json_response: Dict[str, object]) -> None:
         """
-        :param json_response: The json response of one comment
+        :param json_response: The json response of one note comment
         """
 
         self.date: datetime = datetime.strptime(json_response['date'], "%Y-%m-%d %H:%M:%S UTC")
