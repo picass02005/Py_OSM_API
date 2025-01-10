@@ -44,8 +44,7 @@ async def main():
             user_name="Chepycou",
             user_id=14112053,
             bbox=OSMBoundingBox(1.4645, 43.56968, 1.4696, 43.57408),
-            before=datetime.fromisoformat("2022-06-01"),
-            after=datetime.fromisoformat("2022-05-01"),
+            during=OSMTimeDelta(datetime.fromisoformat("2022-05-01"), datetime.fromisoformat("2022-06-01")),
             sort=OSMSort.CREATED_AT,
             # order="newest"
             order=OSMOrder.NEWEST

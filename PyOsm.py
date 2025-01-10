@@ -3,7 +3,6 @@
 
 import json
 import sys
-from datetime import datetime
 from typing import Tuple, Iterable, Optional, Literal
 from urllib.parse import quote
 
@@ -69,8 +68,6 @@ class PyOSM:
                         return -1
 
                     return data['changesets'][0]["uid"]
-
-
 
                 else:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM UID from display_name: {resp.status} "
@@ -189,8 +186,7 @@ class PyOSM:
             user_name: Optional[str] = None,
             user_id: Optional[int] = None,
             bbox: Optional[OSMBoundingBox] = None,
-            before: Optional[datetime] = None,
-            after: Optional[datetime] = None,
+            during: Optional[OSMTimeDelta] = None,
             sort: Optional[Literal[OSMSort.CREATED_AT, OSMSort.UPDATED_AT]] = None,
             order: Optional[Literal[OSMOrder.NEWEST, OSMOrder.OLDEST]] = None
     ) -> Tuple[OSMNote, ...]:
@@ -204,9 +200,8 @@ class PyOSM:
         :param user_name: Search for notes which the given user interacted with
         :param user_id: Same than user_name but with user ID. If both option provided, user_name takes priority
         :param bbox: Coordinates for the area to retrieve the notes from. Must be under self._capability['note_area'] degrees
-        :param before: Keep notes where created_at or updated_at (defined in sort) is before this value
-        :param after: Keep notes where created_at or updated_at (defined in sort) is after this value
-        :param sort: Define what type of values we use for before and after. Valid values are defined in OSMSort
+        :param during: Keep only notes which were created at or updated at (defined in sort) in this timedelta. Before value is optional
+        :param sort: Define what type of values we use for during. Valid values are defined in OSMSort
         :param order: Used to sort by newest or oldest. Valid values are defined in OSMOrder
 
         :return: A tuple containing all notes matching search criterias
@@ -222,9 +217,9 @@ class PyOSM:
             if bbox.get_area() > self.capabilities.notes.area:
                 raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
 
-        if after is not None and before is not None:
-            if after > before:
-                raise ValueError("Before value is older than after value. You probably swapped them")
+        if during is not None:
+            if not during.check_data_validity(optional_after=False):
+                raise ValueError("Before value is older than after value or you forgot to set after value")
 
         if sort not in OSMSort and sort is not None:
             raise ValueError(f"{sort} is an invalid value for sort parameter. Valid values are defined in OSMSort")
@@ -232,8 +227,8 @@ class PyOSM:
         if order not in OSMOrder and order is not None:
             raise ValueError(f"{order} is an invalid value for order parameter. Valid values are defined in OSMOrder")
 
-        if (before is not None or after is not None) and sort is None:
-            ValueError("You must specify sort if before or after is defined")
+        if during is not None and sort is None:
+            ValueError("You must specify sort if during is defined")
 
         # ===== Build URL ===== #
 
@@ -251,11 +246,12 @@ class PyOSM:
         if bbox:
             url += f"&bbox={bbox}"
 
-        if before:
-            url += f"&to={quote(before.isoformat())}"
+        if during is not None:
+            if during.before is not None:
+                url += f"&to={quote(during.before.isoformat())}"
 
-        if after:
-            url += f"&from={quote(after.isoformat())}"
+            if during.after is not None:
+                url += f"&from={quote(during.after.isoformat())}"
 
         if sort:
             url += f"&sort={sort.value if isinstance(sort, OSMSort) else sort}"
@@ -434,5 +430,3 @@ async def py_osm_builder() -> PyOSM:
 
 # TODO: Readme / doc
 # TODO: check imports path
-
-# TODO: check when usage of OSMTimedelta is possible
