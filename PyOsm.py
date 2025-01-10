@@ -317,7 +317,7 @@ class PyOSM:
                 f"Invalid limit: must be a positive below {self.capabilities.changesets.maximum_query_limit}"
             )
 
-        if user_name is None and user_id is None:
+        if user_name is not None and user_id is not None:
             raise ValueError("You can only specify a user name or a user ID, but not both")
 
         if created_timedelta is not None:
