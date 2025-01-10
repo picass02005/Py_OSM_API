@@ -4,7 +4,7 @@
 from datetime import datetime
 from typing import Union, Dict, List
 
-from .Comment import OSMComment
+from .NoteComment import OSMNoteComment
 
 
 class OSMNote:
@@ -33,7 +33,7 @@ class OSMNote:
 
         self.status: str = json_response['properties']['status']
 
-        self.comments: List[OSMComment] = [OSMComment(i) for i in json_response['properties']['comments']]
+        self.comments: List[OSMNoteComment] = [OSMNoteComment(i) for i in json_response['properties']['comments']]
 
         if 'reopen_url' in json_response['properties'].keys():
             self.reopen_url: str = json_response['properties']['reopen_url']

@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Dict
 
 
-class OSMComment:
+class OSMNoteComment:
     """
     This class is used to represent a comment
     """
