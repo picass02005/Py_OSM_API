@@ -20,21 +20,22 @@ class OSMTimeDelta:
         self.before: None | datetime = before
         self.after: None | datetime = after
 
-    def check_data_validity(self) -> bool:
+    def check_data_validity(self, non_optional_before: bool) -> bool:
         """
         Check if before and after are valid regarding time
+        :param non_optional_before: Set to True if you need before value
         :return: True if data is valid
         """
 
-        if self.before is None:
+        if self.before is None and (self.after is None or non_optional_before):
             return False
 
-        elif self.after is None:
-            return True
-
-        else:
+        elif self.before is not None and self.after is not None:
             if self.before <= self.after:
                 return True
 
             else:
                 return False
+
+        else:
+            return True

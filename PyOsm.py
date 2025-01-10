@@ -325,14 +325,14 @@ class PyOSM:
             if created_timedelta.before is None:
                 raise ValueError("You never defined a before datetime for created_timedelta")
 
-            if not created_timedelta.check_data_validity():
+            if not created_timedelta.check_data_validity(True):
                 raise ValueError(f"Created_timedelta is invalid: before datetime is older than after datetime")
 
         if closed_timedelta is not None:
             if closed_timedelta.before is None:
                 raise ValueError("You never defined a before datetime for closed_timedelta")
 
-            if not closed_timedelta.check_data_validity():
+            if not closed_timedelta.check_data_validity(True):
                 raise ValueError(f"Closed_timedelta is invalid: before datetime is older than after datetime")
 
         if status not in OSMStatus:
