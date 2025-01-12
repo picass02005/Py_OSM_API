@@ -21,13 +21,13 @@ from .Objects import OSMUser
 """
 HOW TO FIND YOUR USER ID
 Log in into your OSM account and you will be able to get it on https://api.openstreetmap.org/api/0.6/user/details.json
-It should be under {'users': {'id': YOUR_USER_ID}}
+It should be under {'user': {'id': YOUR_USER_ID}}
 """
 
 
 class PyOSM:
     def __init__(self):
-        self.capabilities = OSMCapabilities()
+        self.capabilities: OSMCapabilities = OSMCapabilities()
 
     async def update_capabilities(self) -> bool:
         """
@@ -392,7 +392,8 @@ class PyOSM:
                     sys.stderr.write(f"WARNING: Couldn't fetch OSM changesets: {resp.status} {await resp.text()}\n")
                     return ()
 
-    async def fetch_changesets_by_id(self, changeset_id: int, include_discussion: bool = False) -> OSMChangeset | None:
+    @staticmethod
+    async def fetch_changesets_by_id(changeset_id: int, include_discussion: bool = False) -> OSMChangeset | None:
         """
         Fetch a changeset by its ID
         :param changeset_id: The changeset ID to fetch from
@@ -427,6 +428,3 @@ async def py_osm_builder() -> PyOSM:
     await pyosm.update_capabilities()
 
     return pyosm
-
-# TODO: Readme / doc
-# TODO: check imports path

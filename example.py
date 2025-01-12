@@ -72,6 +72,24 @@ async def main():
     print(tmp := await py_osm.fetch_changesets_by_id(160518131, include_discussion=True))
     print([str(i) for i in tmp.comments])
 
+    print("=====")
+
+    user_id = await py_osm.get_uid_with_changeset("Chepycou")
+    print(user_id)  # 14112053
+
+    user = await py_osm.fetch_user_info(user_id)
+    print(user)
+    print(user.account_created)  # 2021-09-14 20:01:00+00:00
+    print(user.changesets_count)  # 3293 (at the time I write this script)
+
+    print("=====")
+
+    users = await py_osm.fetch_users_info([1, 14112053])
+    print(users[0])
+    print(users[1])
+
 
 
 asyncio.run(main())
+
+# TODO: remove
