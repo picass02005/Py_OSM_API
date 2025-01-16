@@ -137,8 +137,6 @@ check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_Class.md
 
 ### 5.1. Fetch notes by ID
 
-# TODO: time delta
-
 # TODO: this part
 
 <a name="FetchNotesBboxLink"></a>
@@ -155,4 +153,4 @@ check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_Class.md
 
 ---
 
-# fetch_notes_by_bbox + notes doc
+# TODO: changesets
