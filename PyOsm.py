@@ -130,6 +130,9 @@ class PyOSM:
 
         # ===== Parameters checks ===== #
 
+        if not bbox.check_data():
+            raise ValueError("Bounding box invalid: for more information, check Documentation/OSMBoundingBox.md")
+
         if bbox.cross_date_line():
             raise ValueError("The bounding box crosses date line")
 
@@ -214,6 +217,9 @@ class PyOSM:
             raise ValueError(f"Invalid limit: must be a positive below {self.capabilities.notes.maximum_query_limit}")
 
         if bbox is not None:
+            if not bbox.check_data():
+                raise ValueError("Bounding box invalid: for more information, check Documentation/OSMBoundingBox.md")
+
             if bbox.get_area() > self.capabilities.notes.area:
                 raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
 
@@ -316,6 +322,10 @@ class PyOSM:
 
         if user_name is not None and user_id is not None:
             raise ValueError("You can only specify a user name or a user ID, but not both")
+
+        if bbox is not None:
+            if not bbox.check_data():
+                raise ValueError("Bounding box invalid: for more information, check Documentation/OSMBoundingBox.md")
 
         if created_timedelta is not None:
             if created_timedelta.before is None:
