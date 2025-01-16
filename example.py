@@ -88,6 +88,8 @@ async def main():
     print(users[0])
     print(users[1])
 
+    print(OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741).get_area())
+
 
 
 asyncio.run(main())

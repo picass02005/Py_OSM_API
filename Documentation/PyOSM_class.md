@@ -137,7 +137,7 @@ check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_Class.md
 
 ### 5.1. Fetch notes by ID
 
-# TODO: Bbox + time delta
+# TODO: time delta
 
 # TODO: this part
 
