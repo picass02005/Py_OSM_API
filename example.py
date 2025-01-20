@@ -90,6 +90,34 @@ async def main():
 
     print(OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741).get_area())
 
+    print("=====")
+
+    notes = await py_osm.fetch_notes_by_bbox(
+        bbox=OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741), limit=2, closed=3)
+
+    for i in notes:
+        print(i)
+
+    print("=====")
+
+    notes = await py_osm.fetch_notes_by_search(
+        limit=2,
+        closed=7,
+        query="Sidewalk",
+        # user_name="fgouget",  # You can only use user_name or user_id but not both at the same time
+        user_id=2678738,
+        bbox=OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741),
+        during=OSMTimeDelta(before=datetime(year=2025, month=1, day=1), after=datetime(year=2025, month=1, day=31)),
+        sort=OSMSort.CREATED_AT,
+        order=OSMOrder.OLDEST,
+    )
+
+    for i in notes:
+        print(i)
+
+    # <OSMNote object: 4589392, Statuts=closed, Created on 2025-01-15T04:24:34, 2 comments>
+    # <OSMNote object: 4590107, Statuts=closed, Created on 2025-01-15T18:16:01, 2 comments>
+
 
 
 asyncio.run(main())
