@@ -254,10 +254,10 @@ class PyOSM:
 
         if during is not None:
             if during.before is not None:
-                url += f"&to={quote(during.before.isoformat())}"
+                url += f"&from={quote(during.before.isoformat())}"
 
             if during.after is not None:
-                url += f"&from={quote(during.after.isoformat())}"
+                url += f"&to={quote(during.after.isoformat())}"
 
         if sort:
             url += f"&sort={sort.value if isinstance(sort, OSMSort) else sort}"
