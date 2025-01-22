@@ -27,7 +27,9 @@ class OSMChangeset:
         self.changes_count: int = json_response["changes_count"]
         self.uid: int = json_response["uid"]
 
-        self.open: bool = json_response["open"]
+        self.user: str = json_response["user"]
+
+        self.is_open: bool = json_response["open"]
 
         self.created_at: datetime = datetime.fromisoformat(json_response["created_at"])
 
@@ -37,14 +39,16 @@ class OSMChangeset:
         else:
             self.closed_at: datetime = datetime.fromisoformat("1970-01-01T00:00:00Z")
 
-        self.boundingBox: OSMBoundingBox = OSMBoundingBox(
-            json_response["min_lon"],
-            json_response["min_lat"],
-            json_response["max_lon"],
-            json_response["max_lat"]
-        )
+        if "min_lon" in json_response.keys():
+            self.bounding_box: OSMBoundingBox | None = OSMBoundingBox(
+                json_response["min_lon"],
+                json_response["min_lat"],
+                json_response["max_lon"],
+                json_response["max_lat"]
+            )
 
-        self.user: str = json_response["user"]
+        else:
+            self.bounding_box: OSMBoundingBox | None = None
 
         self.tags: OSMChangesetTags(json_response) = OSMChangesetTags(json_response)
 
