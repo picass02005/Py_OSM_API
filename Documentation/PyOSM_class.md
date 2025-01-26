@@ -19,6 +19,9 @@ You need an initialized instance of it to performs API calls.
     1. [Fetch notes by ID](#FetchNotesIdLink)
     2. [Fetch notes by bounding box](#FetchNotesBboxLink)
     3. [Fetch notes by search](#FetchNotesSearch)
+6. [Get changeset(s)](#GetChangesetsLink)
+    1. [Fetch changeset by ID](#FetchChangesetsIdLink)
+    2. [Fetch changesets by search](#FetchChangesetsSearchLink)
 
 ---
 
@@ -246,4 +249,18 @@ for i in notes:
 
 ---
 
-# TODO: changesets
+<a name="GetChangesetsLink"></a>
+
+## 6. Get changeset(s)
+
+Information about a changeset are stocked in the read-only ``OSMChangeset`` class.<br>
+For more information about this class, please
+check [OSMChangeset, OSMChangesetComment and OSMChangesetTags documentation](OSMChangeset_OSMChangesetComment_OSMChangesetTags_class).
+
+<a name="FetchChangesetsIdLink"></a>
+
+### 6.1. Fetch changeset by ID
+
+<a name="FetchChangesetsSearchLink"></a>
+
+### 6.2. Fetch changesets by search
