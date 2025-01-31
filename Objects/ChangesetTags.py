@@ -128,7 +128,7 @@ class OSMChangesetTags:
         if remove_null_values:
             to_rm = []
             for key, value in to_return.items():
-                if value == "" or value is None or value == ():
+                if value == "" or value == () or value == {} or value is None:
                     to_rm.append(key)
 
             for i in to_rm:

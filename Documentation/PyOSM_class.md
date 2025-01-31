@@ -276,7 +276,7 @@ The following code is an example containing multiple comments:
 changeset = await py_osm.fetch_changeset_by_id(changeset_id=160518131, include_discussion=True)
 
 print(changeset)
-# <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {"custom_tags": {}}>>
+# <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {}>>
 
 print(changeset.comments[0])  # Prints the first comment
 # <OSMChangesetComment object: Tatti Barletta, UID=6693292, Commented on 2024-12-23T08:12:33+00:00, Please take a look at the wiki page: https://wiki.openstreetmap.org/wiki/Key:border_type\nIt makes no sense setting border_type.>
