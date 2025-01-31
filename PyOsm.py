@@ -403,7 +403,7 @@ class PyOSM:
                     return ()
 
     @staticmethod
-    async def fetch_changesets_by_id(changeset_id: int, include_discussion: bool = False) -> OSMChangeset | None:
+    async def fetch_changeset_by_id(changeset_id: int, include_discussion: bool = False) -> OSMChangeset | None:
         """
         Fetch a changeset by its ID
         :param changeset_id: The changeset ID to fetch from
