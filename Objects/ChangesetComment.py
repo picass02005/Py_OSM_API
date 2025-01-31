@@ -31,4 +31,4 @@ class OSMChangesetComment:
         """
 
         return (f"<OSMChangesetComment object: {self.user}, UID={self.uid}, Commented on {self.date.isoformat()}, "
-                f"{self.text}>")
+                f"{self.text.replace("\n", "\\n")}>")

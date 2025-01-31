@@ -30,4 +30,4 @@ class OSMNoteComment:
         :return: A string corresponding to this object
         """
 
-        return f"<OSMNoteComment object: {self.user}, UID={self.uid}, Commented on {self.date.isoformat()}, {self.text}>"
+        return f"<OSMNoteComment object: {self.user}, UID={self.uid}, Commented on {self.date.isoformat()}, {self.text.replace("\n", "\\n")}>"

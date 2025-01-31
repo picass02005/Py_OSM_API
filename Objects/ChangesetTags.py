@@ -46,6 +46,9 @@ class OSMChangesetTags:
         :return: None
         """
 
+        if not "tags" in json_response.items():
+            return
+
         for key, value in json_response["tags"].items():
             match key:
                 case "comment":
