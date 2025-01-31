@@ -261,6 +261,27 @@ check [OSMChangeset, OSMChangesetComment and OSMChangesetTags documentation](OSM
 
 ### 6.1. Fetch changeset by ID
 
+This function get a changeset by its ID.<br>
+This is the only way to retrieve discussions made under a changeset.
+
+This takes as parameter:
+
+- changeset_id: An integer representing the ID of the changeset you want to retrieve
+- include_discussion: A boolean telling the API if you also want to retrieve the discussion.<br>
+  You should avoid setting it to ``True`` if not needed.
+
+The following code is an example containing multiple comments:
+
+````python
+changeset = await py_osm.fetch_changeset_by_id(changeset_id=160518131, include_discussion=True)
+
+print(changeset)
+# <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {"custom_tags": {}}>>
+
+print(changeset.comments[0])  # Prints the first comment
+# <OSMChangesetComment object: Tatti Barletta, UID=6693292, Commented on 2024-12-23T08:12:33+00:00, Please take a look at the wiki page: https://wiki.openstreetmap.org/wiki/Key:border_type\nIt makes no sense setting border_type.>
+````
+
 <a name="FetchChangesetsSearchLink"></a>
 
 ### 6.2. Fetch changesets by search

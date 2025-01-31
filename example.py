@@ -118,6 +118,14 @@ async def main():
     # <OSMNote object: 4589392, Statuts=closed, Created on 2025-01-15T04:24:34, 2 comments>
     # <OSMNote object: 4590107, Statuts=closed, Created on 2025-01-15T18:16:01, 2 comments>
 
+    print("=====")
+
+    a = await py_osm.fetch_changeset_by_id(160518131, include_discussion=True)
+    print(a)
+    # <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {"custom_tags": {}}>>
+    print(a.comments[0])
+    # <OSMChangesetComment object: Tatti Barletta, UID=6693292, Commented on 2024-12-23T08:12:33+00:00, Please take a look at the wiki page: https://wiki.openstreetmap.org/wiki/Key:border_type\nIt makes no sense setting border_type.>
+
 
 
 asyncio.run(main())
