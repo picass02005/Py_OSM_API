@@ -115,7 +115,7 @@ print(user)  # <OSMUser object: Chepycou, UID=14112053, Created on 2021-09-14T20
 For multiple users, you can use ``PyOSM.fetch_users_info``.
 
 This function takes as parameter a set of integers (can be any iterable), representing each user ID.<br>
-It returns a tuple of ``OSMUser`` object (Note: if it fails to get a user, it is skipped).
+It returns a tuple of ``OSMUser`` object (<u>Note:</u> if it fails to get a user, it is skipped).
 
 The following script will get information about users with ID ``1`` and ```14112053```.
 
@@ -168,10 +168,10 @@ This function takes those parameters:
 - bbox: The [bounding box](OSMBoundingBox_class.md) delimiting where you want your notes to be in. This have some
   requirements:
     - This can't cross the date line
-    - Its area must be under ``py_osm.capabilities.notes.area`` (actual value: 25 square degrees)
+  - Its area must be under ``py_osm.capabilities.notes.area`` (current value: 25 square degrees)
 - limit: Positive integer corresponding to the maximum number of notes returned by this
     - This is optional, default value is 100 notes
-    - Its value must be under ``py_osm.capabilities.notes.maximum_query_limit`` (actual value: 10000)
+  - Its value must be under ``py_osm.capabilities.notes.maximum_query_limit`` (current value: 10000)
 - closed: Integer, exclude all notes closed for more days than this value, opened notes are always fetched
     - This is optional, default value is 7 days (notes closed for more than 7 days are ignored)
     - If this value is set to ``0``, only returns opened notes
@@ -213,18 +213,21 @@ Each argument is a criteria, and is optional:
 - user_id: An int which, when set, returns only notes made by this user ID
     - When both user_name and user_id defined, user_id is ignored
 - bbox: An [OSMBoundingBox](OSMBoundingBox_class.md) which, when set, will only return notes which are within this
+    - Its area must be under ``py_osm.capabilities.notes.area`` (current value: 25 square degrees)
 - during: An [OSMTimeDelta](OSMTimeDelta_class.md) which, when set, will perform time related sorting
     - Before argument in this [OSMTimeDelta](OSMTimeDelta_class.md) is optional
     - You need to define ``sort`` for this argument to work
 - sort: An [OSMSort](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will specify if ``during`` is filtering on
   ``creation`` or ``update``
     - You need to define ``during`` for this argument to work
-- order: An [OSMOrder](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will order returned data in order first or
-  newer first
+- order: An [OSMOrder](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will order returned data in a set order (
+  ``older first`` or ``newer first``)
 
 Return of this function is a tuple of [OSMNotes](OSMNote_OSMNoteComment_Class.md).
 
 If any parameter is invalid, this will raise a ``TypeError``.
+
+This example return notes matching those criteria:
 
 ````python
 notes = await py_osm.fetch_notes_by_search(
@@ -285,3 +288,62 @@ print(changeset.comments[0])  # Prints the first comment
 <a name="FetchChangesetsSearchLink"></a>
 
 ### 6.2. Fetch changesets by search
+
+You can also get changesets corresponding to some criteria. For this you can use
+``py_osm.fetch_changesets_by_search``.<br>
+For more specific documentation, please check the
+official [Open Street Map documentation](https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_/api/0.6/changesets).
+
+<u>Note:</u> This method does not return discussions made on each changesets. To get thoses, please refer
+to [6.1. Fetch changeset by ID](#FetchChangesetsIdLink).
+
+Each argument is a criteria, and is optional:
+
+- limit: An integer defining the maximum of OSMChangeset returned
+    - Default value: 100 OSMChangesets
+    - Its value must be under ``py_osm.capabilities.changesets.maximum_query_limit`` (actual value: 100)
+- user_name: A string which, when set, returns only changesets made by this user
+- user_id: An int which, when set, returns only changesets made by this user ID
+    - When both user_name and user_id defined, user_id is ignored
+- bbox: An [OSMBoundingBox](OSMBoundingBox_class.md) which, when set, will only return changesets which are within this
+- created_timedelta: An [OSMTimeDelta](OSMTimeDelta_class.md) which, when set, return only changesets created during
+  this timedelta
+    - Before argument in this [OSMTimeDelta](OSMTimeDelta_class.md) is optional
+- closed_timedelta: An [OSMTimeDelta](OSMTimeDelta_class.md) which, when set, return only changesets closed during this
+  timedelta
+    - Before argument in this [OSMTimeDelta](OSMTimeDelta_class.md) is optional
+- by_ids: An iterable (e.g. a list or a tuple) of integer representing changeset ID. When set, return only changesets
+  with those IDs if they match other defined criteria
+- status: An [OSMStatus](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will only return ``opened``, ``closed`` or
+  ``both opened and closed`` (e.g. any) changesets
+    - Default status is ``OSMStatus.OPEN_AND_CLOSED`` which means it will return both ``closed`` and ``opened``
+      changesets
+- order: An [OSMOrder](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will order returned data in a set order (
+  ``older first`` or ``newer first``)
+
+Return of this function is a tuple of [OSMChangeset](OSMChangeset_OSMChangesetComment_OSMChangesetTags_class.md).
+
+If any parameter is invalid, this will raise a ``TypeError``.
+
+This example return changesets matching those criteria:
+
+````python
+changesets = await py_osm.fetch_changesets_by_search(
+    limit=2,
+    # user_name="one way home",  # You can only use user_name or user_id but not both at the same time
+    user_id=17131126,
+    bbox=OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741),
+    created_timedelta=OSMTimeDelta(before=datetime(year=2025, month=1, day=1), after=datetime(year=2025, month=1, day=31)),
+    closed_timedelta=OSMTimeDelta(before=datetime(year=2025, month=2, day=1), after=datetime(year=2025, month=2, day=28)),
+    by_ids=(161944524, 161943177, 161943119),  # Only return changesets in this tuple
+                                               # The oldest one will be ignored because of order and limit values
+    status=OSMStatus.CLOSED,
+    order=OSMOrder.NEWEST
+)
+
+for i in changesets:
+    print(i)
+
+# <OSMChangeset object: id=161944524, user=one way home, created_at=2025-01-30 16:32:59+00:00, tags=<OSMChangesetTags: {}>>
+# <OSMChangeset object: id=161943177, user=one way home, created_at=2025-01-30 15:56:25+00:00, tags=<OSMChangesetTags: {}>>
+````

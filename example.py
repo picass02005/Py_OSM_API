@@ -126,6 +126,28 @@ async def main():
     print(a.comments[0])
     # <OSMChangesetComment object: Tatti Barletta, UID=6693292, Commented on 2024-12-23T08:12:33+00:00, Please take a look at the wiki page: https://wiki.openstreetmap.org/wiki/Key:border_type\nIt makes no sense setting border_type.>
 
+    print("=====")
+
+    changesets = await py_osm.fetch_changesets_by_search(
+        limit=2,
+        # user_name="one way home",  # You can only use user_name or user_id but not both at the same time
+        user_id=17131126,
+        bbox=OSMBoundingBox(left=2.251854, bottom=48.814777, right=2.416649, top=48.901741),
+        created_timedelta=OSMTimeDelta(before=datetime(year=2025, month=1, day=1),
+                                       after=datetime(year=2025, month=1, day=31)),
+        closed_timedelta=OSMTimeDelta(before=datetime(year=2025, month=2, day=1),
+                                      after=datetime(year=2025, month=2, day=28)),
+        by_ids=(161944524, 161943177, 161943119),  # Only return changesets in this tuple
+        # The oldest one will be ignored because of order and limit values
+        status=OSMStatus.CLOSED,
+        order=OSMOrder.NEWEST
+    )
+
+    for i in changesets:
+        print(i)
+
+    # <OSMChangeset object: id=161944524, user=one way home, created_at=2025-01-30 16:32:59+00:00, tags=<OSMChangesetTags: {}>>
+    # <OSMChangeset object: id=161943177, user=one way home, created_at=2025-01-30 15:56:25+00:00, tags=<OSMChangesetTags: {}>>
 
 
 asyncio.run(main())
