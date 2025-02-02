@@ -8,15 +8,15 @@ from urllib.parse import quote
 
 import aiohttp
 
-from .Capabilities import OSMCapabilities
-from .Enums import OSMOrder
-from .Enums import OSMSort
-from .Enums import OSMStatus
-from .Objects import OSMBoundingBox
-from .Objects import OSMChangeset
-from .Objects import OSMNote
-from .Objects import OSMTimeDelta
-from .Objects import OSMUser
+from Capabilities import OSMCapabilities
+from Enums import OSMOrder
+from Enums import OSMSort
+from Enums import OSMStatus
+from Objects import OSMBoundingBox
+from Objects import OSMChangeset
+from Objects import OSMNote
+from Objects import OSMTimeDelta
+from Objects import OSMUser
 
 """
 HOW TO FIND YOUR USER ID
@@ -227,10 +227,16 @@ class PyOSM:
             if not during.check_data_validity(optional_after=False):
                 raise ValueError("Before value is older than after value or you forgot to set after value")
 
-        if sort not in OSMSort and sort is not None:
+        if isinstance(sort, str):
+            sort = OSMSort(sort)
+
+        if sort is not None and sort.value not in OSMSort:
             raise ValueError(f"{sort} is an invalid value for sort parameter. Valid values are defined in OSMSort")
 
-        if order not in OSMOrder and order is not None:
+        if isinstance(order, str):
+            order = OSMOrder(order)
+
+        if order is not None and order.value not in OSMOrder:
             raise ValueError(f"{order} is an invalid value for order parameter. Valid values are defined in OSMOrder")
 
         if during is not None and sort is None:
@@ -341,10 +347,16 @@ class PyOSM:
             if not closed_timedelta.check_data_validity(optional_before=False):
                 raise ValueError(f"Closed_timedelta is invalid: before datetime is older than after datetime")
 
-        if status not in OSMStatus:
+        if isinstance(status, str):
+            status = OSMStatus(status)
+
+        if status.value not in OSMStatus:
             raise ValueError(f"{status} is an invalid value for sort parameter. Valid values are defined in OSMStatus")
 
-        if order not in OSMOrder and order is not None:
+        if isinstance(order, str):
+            order = OSMOrder(order)
+
+        if order is not None and order.value not in OSMOrder:
             raise ValueError(f"{order} is an invalid value for sort parameter. Valid values are defined in OSMOrder")
 
         # ===== Build URL =====
