@@ -26,3 +26,7 @@ import Py_OSM_API
 You can find a quickstart guide [here](Documentation/Quickstart.md).<br>
 You also can take a look in the [documentation folder](Documentation) for a full documentation.<br>
 There are some examples in the documentation.
+
+You can also find a full example script in [Py_OSM_API/example.py](example.py).
+
+## Thanks for using Py_OSM_API

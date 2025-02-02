@@ -32,8 +32,19 @@ You need an initialized instance of it to performs API calls.
 To properly initialize this class, use the ``py_osm_builder()`` couroutine.
 
 ````python
-py_osm = await py_osm_builder()
+import asyncio
+from Py_OSM_API import py_osm_builder
+
+
+async def main():
+    py_osm = await py_osm_builder()
+
+
+asyncio.run(main())
 ````
+
+<u>Note:</u> in the following examples, we will suppose we are inside our ``main`` function after ``py_osm`` is
+initialized.
 
 ---
 
@@ -134,7 +145,7 @@ print(users[1])  # <OSMUser object: Chepycou, UID=14112053, Created on 2021-09-1
 
 Information about a note are stocked in the read-only ``OSMNote`` class.<br>
 For more information about this class, please
-check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_Class.md).
+check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_class).
 
 <a name="FetchNotesIdLink"></a>
 
@@ -142,7 +153,7 @@ check [OSMNote and OSMNoteComment documentation](OSMNote_OSMNoteComment_Class.md
 
 You can get information about a note with its ID. For this, you can use ``py_osm.fetch_note_by_id``.<br>
 This function takes as parameter a note_id as a float.<br>
-It returns a single [OSMNote](OSMNote_OSMNoteComment_Class.md) object (or ``None`` if not found).
+It returns a single [OSMNote](OSMNote_OSMNoteComment_class) object (or ``None`` if not found).
 
 The following script will get information about note with ID ``3177810``:
 
@@ -223,7 +234,7 @@ Each argument is a criteria, and is optional:
 - order: An [OSMOrder](OSMSort_OSMOrder_OSMSatus_class.md) which, when set, will order returned data in a set order (
   ``older first`` or ``newer first``)
 
-Return of this function is a tuple of [OSMNotes](OSMNote_OSMNoteComment_Class.md).
+Return of this function is a tuple of [OSMNotes](OSMNote_OSMNoteComment_class).
 
 If any parameter is invalid, this will raise a ``TypeError``.
 
@@ -279,7 +290,7 @@ The following code is an example containing multiple comments:
 changeset = await py_osm.fetch_changeset_by_id(changeset_id=160518131, include_discussion=True)
 
 print(changeset)
-# <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {}>>
+# <OSMChangeset object: id=160518131, user=Loren Maxwell, created_at=2024-12-22 22:58:12+00:00, tags=<OSMChangesetTags: {"comment": "Added border_type=state", "created_by": "JOSM/1.5 (19253 en)"}>>
 
 print(changeset.comments[0])  # Prints the first comment
 # <OSMChangesetComment object: Tatti Barletta, UID=6693292, Commented on 2024-12-23T08:12:33+00:00, Please take a look at the wiki page: https://wiki.openstreetmap.org/wiki/Key:border_type\nIt makes no sense setting border_type.>
@@ -344,6 +355,6 @@ changesets = await py_osm.fetch_changesets_by_search(
 for i in changesets:
     print(i)
 
-# <OSMChangeset object: id=161944524, user=one way home, created_at=2025-01-30 16:32:59+00:00, tags=<OSMChangesetTags: {}>>
-# <OSMChangeset object: id=161943177, user=one way home, created_at=2025-01-30 15:56:25+00:00, tags=<OSMChangesetTags: {}>>
+# <OSMChangeset object: id=161944524, user=one way home, created_at=2025-01-30 16:32:59+00:00, tags=<OSMChangesetTags: {"comment": "Survey wheelchair accessibility of places", "created_by": "StreetComplete 60.1", "source": "survey", "locale": "en-CA", "custom_tags": {"StreetComplete:quest_type": "AddWheelchairAccessBusiness"}}>>
+# <OSMChangeset object: id=161943177, user=one way home, created_at=2025-01-30 15:56:25+00:00, tags=<OSMChangesetTags: {"comment": "Specify whether kerbs have tactile paving", "created_by": "StreetComplete 60.1", "source": "survey", "locale": "en-CA", "custom_tags": {"StreetComplete:quest_type": "AddTactilePavingKerb"}}>>
 ````
