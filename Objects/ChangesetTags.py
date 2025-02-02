@@ -46,7 +46,7 @@ class OSMChangesetTags:
         :return: None
         """
 
-        if not "tags" in json_response.items():
+        if "tags" not in json_response.keys():
             return
 
         for key, value in json_response["tags"].items():
