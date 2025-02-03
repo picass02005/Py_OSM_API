@@ -8,15 +8,15 @@ from urllib.parse import quote
 
 import aiohttp
 
-from Capabilities import OSMCapabilities
-from Enums import OSMOrder
-from Enums import OSMSort
-from Enums import OSMStatus
-from Objects import OSMBoundingBox
-from Objects import OSMChangeset
-from Objects import OSMNote
-from Objects import OSMTimeDelta
-from Objects import OSMUser
+from .Capabilities import OSMCapabilities
+from .Enums import OSMOrder
+from .Enums import OSMSort
+from .Enums import OSMStatus
+from .Objects import OSMBoundingBox
+from .Objects import OSMChangeset
+from .Objects import OSMNote
+from .Objects import OSMTimeDelta
+from .Objects import OSMUser
 
 """
 HOW TO FIND YOUR USER ID
