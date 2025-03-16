@@ -4,7 +4,7 @@
 import asyncio
 from datetime import datetime
 
-from Cogs.OSM.Py_OSM_API import OSMOrder
+from Enums import OSMOrder
 from Enums import OSMSort
 from Objects import OSMBoundingBox
 from Objects import OSMTimeDelta
