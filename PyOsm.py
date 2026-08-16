@@ -260,10 +260,10 @@ class PyOSM:
 
         if during is not None:
             if during.before is not None:
-                url += f"&from={quote(during.before.isoformat())}"
+                url += f"&to={quote(during.before.isoformat())}"
 
             if during.after is not None:
-                url += f"&to={quote(during.after.isoformat())}"
+                url += f"&from={quote(during.after.isoformat())}"
 
         if sort:
             url += f"&sort={sort.value if isinstance(sort, OSMSort) else sort}"
@@ -373,10 +373,10 @@ class PyOSM:
             url += f"&bbox={bbox}"
 
         if created_timedelta is not None:
-            url += f"&from={created_timedelta.before.isoformat()}"
+            url += f"&to={created_timedelta.before.isoformat()}"
 
             if created_timedelta.after is not None:
-                url += f"&to={created_timedelta.after.isoformat()}"
+                url += f"&from={created_timedelta.after.isoformat()}"
 
         if closed_timedelta is not None:
             url += f"&time={created_timedelta.before.isoformat()}"
