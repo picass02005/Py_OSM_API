@@ -224,7 +224,7 @@ class PyOSM:
                 raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
 
         if during is not None:
-            if not during.check_data_validity(optional_before=False):
+            if not during.check_data_validity(optional_after=False):
                 raise ValueError("After value is newer than before value or you forgot to set before value")
 
         if isinstance(sort, str):
