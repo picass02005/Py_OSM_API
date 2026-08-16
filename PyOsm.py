@@ -224,8 +224,8 @@ class PyOSM:
                 raise ValueError(f"Bounding box must be under {self.capabilities.notes.area} square degrees")
 
         if during is not None:
-            if not during.check_data_validity(optional_after=False):
-                raise ValueError("Before value is older than after value or you forgot to set after value")
+            if not during.check_data_validity(optional_before=False):
+                raise ValueError("After value is newer than before value or you forgot to set before value")
 
         if isinstance(sort, str):
             sort = OSMSort(sort)
@@ -259,11 +259,10 @@ class PyOSM:
             url += f"&bbox={bbox}"
 
         if during is not None:
+            url += f"&from={quote(during.after.isoformat())}"
+
             if during.before is not None:
                 url += f"&to={quote(during.before.isoformat())}"
-
-            if during.after is not None:
-                url += f"&from={quote(during.after.isoformat())}"
 
         if sort:
             url += f"&sort={sort.value if isinstance(sort, OSMSort) else sort}"
@@ -334,17 +333,17 @@ class PyOSM:
                 raise ValueError("Bounding box invalid: for more information, check Documentation/OSMBoundingBox.md")
 
         if created_timedelta is not None:
-            if created_timedelta.before is None:
-                raise ValueError("You never defined a before datetime for created_timedelta")
+            if created_timedelta.after is None:
+                raise ValueError("You never defined a after datetime for created_timedelta")
 
-            if not created_timedelta.check_data_validity(optional_before=False):
+            if not created_timedelta.check_data_validity(optional_after=False):
                 raise ValueError(f"Created_timedelta is invalid: before datetime is older than after datetime")
 
         if closed_timedelta is not None:
-            if closed_timedelta.before is None:
-                raise ValueError("You never defined a before datetime for closed_timedelta")
+            if closed_timedelta.after is None:
+                raise ValueError("You never defined a after datetime for closed_timedelta")
 
-            if not closed_timedelta.check_data_validity(optional_before=False):
+            if not closed_timedelta.check_data_validity(optional_after=False):
                 raise ValueError(f"Closed_timedelta is invalid: before datetime is older than after datetime")
 
         if isinstance(status, str):
@@ -373,16 +372,16 @@ class PyOSM:
             url += f"&bbox={bbox}"
 
         if created_timedelta is not None:
-            url += f"&to={created_timedelta.before.isoformat()}"
+            url += f"&from={created_timedelta.after.isoformat()}"
 
-            if created_timedelta.after is not None:
-                url += f"&from={created_timedelta.after.isoformat()}"
+            if created_timedelta.before is not None:
+                url += f"&to={created_timedelta.before.isoformat()}"
 
         if closed_timedelta is not None:
-            url += f"&time={created_timedelta.before.isoformat()}"
+            url += f"&time={closed_timedelta.after.isoformat()}"
 
-            if closed_timedelta.after is not None:
-                url += f",{created_timedelta.after.isoformat()}"
+            if closed_timedelta.before is not None:
+                url += f",{closed_timedelta.before.isoformat()}"
 
         if by_ids is not None:
             url += f"&changesets={','.join([str(i) for i in by_ids])}"
